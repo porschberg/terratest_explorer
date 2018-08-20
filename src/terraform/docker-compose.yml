@@ -1,0 +1,26 @@
+version: "3"
+services:
+  web:
+    restart: unless-stopped
+    image: pierrezemb/gostatic
+    volumes:
+    - "./data:/srv/http"
+    labels:
+    - "traefik.enable=true"
+    - "traefik.port=8043"
+    - "traefik.frontend.rule=Host:${terratest_explorer_stage}.terratestexplorer.beyondtouch.io"
+    - "traefik.frontend.entryPoints=http,https"
+    #- "traefik.backend=web"
+  traefik:
+    image: traefik:1.6
+    ports:
+    - "80:80"
+    - "443:443"
+    - "9080:8080"
+    volumes:
+    - ./traefik.toml:/traefik.toml
+    - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+
+volumes:
+  data:
