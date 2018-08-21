@@ -9,7 +9,13 @@ terraform {
 
 provider "aws" {
   region = "eu-central-1"
-
-  # AccesKey and secret must set in OS ENV!
+  version = "~> 1.32"
 }
 
+provider "template" {
+  version = "~> 1.0"
+}
+
+provider "tls" {
+  version = "~> 1.2"
+}
