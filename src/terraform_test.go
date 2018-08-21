@@ -18,7 +18,7 @@ import (
 )
 
 // An example of how to test the simple Terraform module in examples/terraform-basic-example using Terratest.
-func TestTerraformCrispyBackend(t *testing.T) {
+func TestTerraformExplorer(t *testing.T) {
   t.Parallel()
 
   terraformOptions := &terraform.Options{
