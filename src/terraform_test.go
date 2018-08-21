@@ -12,7 +12,6 @@ import (
   "github.com/gruntwork-io/terratest/modules/retry"
   "strings"
   "github.com/gruntwork-io/terratest/modules/logger"
-  "io/ioutil"
   "github.com/gruntwork-io/terratest/modules/http-helper"
   "regexp"
   "github.com/gruntwork-io/terratest/modules/test-structure"
@@ -48,8 +47,8 @@ func TestTerraformCrispyBackend(t *testing.T) {
   }
 
 func testIPLookup(t *testing.T, terraformOptions *terraform.Options) {
-  outputIP := terraform.Output(t, terraformOptions, "backend_compute_public_ip")
-  actualInstanceID := terraform.Output(t, terraformOptions, "backend_compute_id")
+  outputIP := terraform.Output(t, terraformOptions, "terratest_explorer_compute_public_ip")
+  actualInstanceID := terraform.Output(t, terraformOptions, "terratest_explorer_compute_id")
   instanceIP := aws.GetPublicIpOfEc2Instance(t, actualInstanceID, "eu-central-1")
   assert.Equal(t, instanceIP, outputIP)
 }
@@ -59,9 +58,9 @@ func testHTTPGETRequest(t *testing.T) {
   timeBetweenRetries := 5 * time.Second
   // Verify that we get back a 200 OK with the expected instanceText
 
-  http_helper.HttpGetWithRetryWithCustomValidation(t, "https://test-backend.crispytrain.beyondtouch.io/", maxRetries, timeBetweenRetries,
+  http_helper.HttpGetWithRetryWithCustomValidation(t, "https://test.terratestexplorer.beyondtouch.io/", maxRetries, timeBetweenRetries,
     func(statusCode int, body string) bool {
-    matched, _ := regexp.MatchString(`^CrispyTrain-Backend`, body)
+    matched, _ := regexp.MatchString(`this is a simple page for terratest explorer`, body)
     logger.Logf(t, "HTTP statusCode: %s", statusCode)
     logger.Logf(t, "HTTP Response-BODY: %s", body)
     return statusCode == 200 && matched
@@ -69,8 +68,8 @@ func testHTTPGETRequest(t *testing.T) {
 }
 
 func testSSHToPublicHost(t *testing.T, terraformOptions *terraform.Options) {
-  backendIP := terraform.Output(t, terraformOptions, "backend_compute_public_ip")
-  sshKeypair, err := extractKeypair(t, "./docker-crispy.pub", "./docker-crispy")
+  backendIP := terraform.Output(t, terraformOptions, "terratest_explorer_compute_public_ip")
+  sshKeypair, err := extractKeypair(t, terraformOptions)
   if err != nil {
     logger.Logf(t, "ERROR on extracting sshKeyPair: %s", err)
     t.Fatal(err)
@@ -96,7 +95,7 @@ func testSSHToPublicHostInternal(t *testing.T, sshKeyPair *ssh.KeyPair, publicIn
   description := fmt.Sprintf("SSH to public host %s", publicInstanceIP)
 
   // Run a simple echo command on the server
-  expectedText := "Hello Beyondtouch!"
+  expectedText := "Hello Terratest!"
   command := fmt.Sprintf("echo -n '%s'", expectedText)
 
   // Verify that we can SSH to the Instance and run commands
@@ -116,18 +115,8 @@ func testSSHToPublicHostInternal(t *testing.T, sshKeyPair *ssh.KeyPair, publicIn
 }
 
 // GenerateRSAKeyPairE generates an RSA Keypair and return the public and private keys.
-func extractKeypair(t *testing.T, publicKeyName string, privateKeyName string) (*ssh.KeyPair, error) {
-  logger.Logf(t, "Load Keys from files %s %s", publicKeyName, privateKeyName)
-
-  publicKey, err := ioutil.ReadFile(publicKeyName)
-  if err != nil {
-    return nil, err
-  }
-
-  privateKey, err := ioutil.ReadFile(privateKeyName)
-  if err != nil {
-    return nil, err
-  }
-
-  return &ssh.KeyPair{ PublicKey: string(publicKey), PrivateKey: string(privateKey)}, nil
+func extractKeypair(t *testing.T, terraformOptions *terraform.Options) (*ssh.KeyPair, error) {
+  publicKey := terraform.Output(t, terraformOptions, "terratest_explorer_public_key")
+  privateKey := terraform.Output(t, terraformOptions, "terratest_explorer_private_key")
+  return &ssh.KeyPair{ PublicKey: publicKey, PrivateKey: privateKey}, nil
 }
