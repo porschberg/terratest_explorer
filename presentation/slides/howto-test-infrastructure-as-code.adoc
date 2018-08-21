@@ -1,0 +1,163 @@
+= Beyond Touch - Test Infrastructure as Code
+:author: Bernd Ledig, Thomas Porschberg, Dresden 2018
+:customcss: css/ottogroup-slides-intern.css
+:revealjs_theme: white
+:revealjs_slideNumber: true
+:imagesdir: ./images
+:icons: font
+:data-uri:
+
+
+[.float-right]
+image:beyondtouch-logo.png[BeyondTouch-Logo, 250, role='noborder'] +
+[.small gray]#BeyondTouch Project#
+
+Wie teste ich Infrastructure as Code?
+
+
+
+== Authors
+
+[.float-right]
+image:thomas.jpg[Bild Thomas, 250] +
+Thomas Porschberg +
+Fullstack-SW-Developer +
+image:osp_logo.png[OSP, 90, role='noborder']
+
+image::bernd-2017q-1024.png[Bernd, 250]
+Bernd Ledig +
+SW-Architekt & DevOps +
+image:osp_logo.png[OSP, 90, role='noborder']
+
+== Die Aufgabe
+
+Aufbau der Infrastruktur für ein Teilprojekt innerhalb des Beyondtouc-Projektes in der AWS-Cloud
+
+* Infrasturcture as Code auf der Basis von Terraform +
+  +++<small>+++(Terraform = Tool to Write, Plan, and Create Infrastructure as Code) +++</small>+++
+* Es werden mehrere Umgebungen (dev, test, prod, ...) benötigt
+* Code ist getestet
+
+
+
+== Die Infra-Zielarchtektur
+
+
+hier Grafik
+
+== Implementierung -> Terraform
+
+image:terraform-gross.png[Terraform]
+
+=== Warum Terraform
+
+Write, Plan, and Create Infrastructure as Code
+
+
+=== Terraform Workspaces
+
+Die Lösung für mehrere Umgebungen
+
+== Architektur der Anwendung
+
+image::architecture-3.jpg[Architektur]
+
+=== Systemübersicht
+
+image::shipchat-overview.png[System]
+
+=== technische Architektur
+
+image::shipchat-architecture.png[Architektur]
+
+
+=== Anbindung an OAuth2-System von otto.de
+
+* OAuth ist der quasi Standard für verteilte Authentifizierung & Authorisierung
+* Nutzer hat die Kontrolle welche App mit welchen Rechten sein Konto nutzt
+* transparente und jederzeit änderbare Rechtezuteilung
+
+=== OAuth2 - Ablauf
+
+image::oauth2-overview.png[OAuth2]
+
+
+=== Anbindung an die Sendungs-API von otto.de
+
+image::OttoAPILogoGroß.png[OttoApiLogo]
+
+siehe Session "APIs wanted"
+
+== Dev- und Deployment-Umgebung
+
+image::continuous-delivery.png[Deployment]
+
+
+=== Dev-Umgebung
+
+[.noborder]
+image:nodejs-logo.png[NodeJsLogo,200,150]
+image:python-logo.png[PythonLogo]
+
+* Erste Implementierung erfolgte mit: +
+  Bot: _NodeJS_, NLP: _Python_ 
+* Beide Module sind *"dockerisiert"* image:docker_logo.png[DockerLogo,200, role="right"]
+* \=> Lokale Entwicklung ohne _Dependency Hell_
+
+=== Lokale Dev-Umgebung
+
+Starten der einzelnen Module (Bot, Redis, NLP) als _Docker-Compose_-Verbund
+
+[source,yaml]
+.docker-compose.yml [gekürzt]
+-----
+services:
+  web:
+    image: beyondtouch/shipchat:latest
+    build: . <1>
+    ports:
+      - "9000:9000"
+  redis:
+    image: redis:3.2-alpine
+  intent:
+    image: beyondtouch/nlp:latest
+-----
+<1> Damit ist ein lokales Build möglich
+
+=== Deployment
+
+Als Build- und Deployment-Platform haben wir *cloud.docker.com* gewählt u.a. wegen:
+
+* Automatisertes Build der Images bei Push auf das Git-Repository
+* Bereitstellung Docker-Swarm 
+* *komplettes* Management der zugehörigen AWS-Ressourcen
+* Deployment der Container(Services) in den Docker-Swarm 
+
+=== Build-Pipeline
+
+image::build-process.drawio.png[Build-Process]
+
+=== Screenshot cloud.docker.com
+
+image:ss-cloud.docker.com.png[Docker-Cloud-Build]
+
+=== Produktiv-Umgebung
+
+image:prod-environment.png[ProdEnv]
+
+
+== Herausforderungen und Learnings
+
+* FB-Messenger API Doku nicht besonders gut
+** Ausprobieren an vielen Stellen notwendig
+* FB-Messenger-Account-Linking mit OTTO-Oauth so nicht nutzbar
+** Eigener Bot muss als Proxy vermittlen
+
+
+== Talk to us
+
+Teamraum 
+https://www.ottogroupnet.com/beyondtouch/
+
+[.noborder]
+image::teamraum_qr.svg[250,250,float="left"]

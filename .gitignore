@@ -1,3 +1,5 @@
 .idea/
 .terraform/
 deploy_rsa.*
+pkg/
+src/github.com/

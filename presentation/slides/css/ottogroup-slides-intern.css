@@ -1,0 +1,59 @@
+/*
+.reveal .slides {
+  background-image: url("../images/otto_group_logo-250x50.png");
+  background-repeat: no-repeat;
+  background-position: right top;
+}
+*/
+
+/* Trick für Hintergundbild mit opacity */
+.reveal .slides::after {
+  content: "";
+  background-image: url("../images/otto_group_logo-250x50.png");
+  background-repeat: no-repeat;
+  background-position: right top;
+  opacity: 0.5;
+  background-size: 250px;
+  top: -10px;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  position: absolute;
+  z-index: -1;   
+}
+
+.reveal .slides { text-align: left; }
+
+.reveal section.title h1, .reveal section h2 {
+  color: #e11f1f;
+  text-transform: none;
+}
+
+.reveal section img { border: none; }
+.reveal h1 { font-size: 2em; }
+.reveal dt { font-size: 80%; }
+
+.noborder {}
+.noborder img {
+	border: none;
+	box-shadow: none !important;
+}
+
+.listingblock .title {
+  font-size: 80%;
+  color: #666;
+  font-style: italic;
+  width: 90%;
+  margin: 3px auto;
+}
+/*.content b, .colist b { color: #a00; }*/
+.reveal b, .reveal strong { color: #a00; }
+.colist td { font-size: 75%; color: #666; font-style: italic; }
+
+.float-right { float: right; }
+
+/* Inline Images ohne margin */
+.reveal section span.image img { margin: 0; }
+
+.small { font-size: 70% important; }
+
