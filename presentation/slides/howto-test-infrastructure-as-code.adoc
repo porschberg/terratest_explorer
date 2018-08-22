@@ -31,11 +31,11 @@ image:osp_logo.png[OSP, 90, role='noborder']
 
 == Die Aufgabe
 
-Aufbau der Infrastruktur für ein Teilprojekt innerhalb des Beyondtouc-Projektes in der AWS-Cloud
+Aufbau der Infrastruktur für ein Teilprojekt innerhalb des Beyondtouch-Projektes in der AWS-Cloud
 
 * Infrasturcture as Code auf der Basis von Terraform +
   +++<small>+++(Terraform = Tool to Write, Plan, and Create Infrastructure as Code) +++</small>+++
-* Es werden mehrere Umgebungen (dev, test, prod, ...) benötigt
+* Es werden mehrere Umgebungen (dev, test, prod) benötigt
 * Code ist getestet
 
 
@@ -51,62 +51,57 @@ image:terraform-gross.png[Terraform]
 
 === Warum Terraform
 
-Write, Plan, and Create Infrastructure as Code
+* Unterstützt alle gängingen Cloud-Anbieter +
+  -> mindert den _Vendorlock_ 
+* bietet durch zusätzliche Module/Plugins deutlichen Mehrwert
+  bzgl. den properitären Cloud-Anbieter-Lösungen
+* ist OpenSource
+
+=== Terraform - Grundkonzept
+
+* Beschreibung der Infrastructure in Form von Anforderungs-Dateien in eigener einfacherTerraform-DSL
+* 3 Typen von Definitionen:
+** Variablen: Definieren von Parameteren
+** Daten: Holen von Informationen aus der Cloud
+** Ressourcen: Definition der benötigten Infrastructure-Komponete
 
 
 === Terraform Workspaces
 
-Die Lösung für mehrere Umgebungen
+*Die Lösung für mehrere Umgebungen (dev, test, ...).* +
+Terraform-Workspace erlauben das _"Ausrollen"_ von Infrastructure für verschidene Umgebungen ohne dafür umständich Scripten zu müssen.
 
-== Architektur der Anwendung
+----
+terraform workspace new test
+terraform apply
+----
 
-image::architecture-3.jpg[Architektur]
+=== Das Testframework: Terratest 
+Terratest ist ein Framework zum *automatisierten* Testen von Terraform-Scripts.
 
-=== Systemübersicht
+Es ermöglicht Tests in _Go_ zu implementieren die dann:
 
-image::shipchat-overview.png[System]
-
-=== technische Architektur
-
-image::shipchat-architecture.png[Architektur]
-
-
-=== Anbindung an OAuth2-System von otto.de
-
-* OAuth ist der quasi Standard für verteilte Authentifizierung & Authorisierung
-* Nutzer hat die Kontrolle welche App mit welchen Rechten sein Konto nutzt
-* transparente und jederzeit änderbare Rechtezuteilung
-
-=== OAuth2 - Ablauf
-
-image::oauth2-overview.png[OAuth2]
+_Testing Terraform code; Testing Docker images;_
+_Executing commands on servers over SSH;_
+_Making HTTP requests;_
+_Running shell commands; ... _
 
 
-=== Anbindung an die Sendungs-API von otto.de
+== Ein kleines Beispiel
 
-image::OttoAPILogoGroß.png[OttoApiLogo]
+Einfaches Beispiel:: Dockerrized static Webserver
 
-siehe Session "APIs wanted"
+image::architecture-terraform-explorer[Architektur]
 
-== Dev- und Deployment-Umgebung
+=== Die Terraform-Scripte
 
-image::continuous-delivery.png[Deployment]
+terraform.tf:: Definition Provider, Backend
+variables.tf:: Feslegung der variablen Parameter ggf. abhängig vom Workspace
+data.tf:: Welche Daten werden aus der Cloud/Lokal benötigt
+«other».tf:: Die eigentlichen benötigten Ressourcen
 
+=== Die Terraform-Tests
 
-=== Dev-Umgebung
-
-[.noborder]
-image:nodejs-logo.png[NodeJsLogo,200,150]
-image:python-logo.png[PythonLogo]
-
-* Erste Implementierung erfolgte mit: +
-  Bot: _NodeJS_, NLP: _Python_ 
-* Beide Module sind *"dockerisiert"* image:docker_logo.png[DockerLogo,200, role="right"]
-* \=> Lokale Entwicklung ohne _Dependency Hell_
-
-=== Lokale Dev-Umgebung
-
-Starten der einzelnen Module (Bot, Redis, NLP) als _Docker-Compose_-Verbund
 
 [source,yaml]
 .docker-compose.yml [gekürzt]
@@ -116,42 +111,21 @@ services:
     image: beyondtouch/shipchat:latest
     build: . <1>
     ports:
-      - "9000:9000"
-  redis:
-    image: redis:3.2-alpine
-  intent:
-    image: beyondtouch/nlp:latest
 -----
 <1> Damit ist ein lokales Build möglich
 
-=== Deployment
+=== Live-Demo
 
-Als Build- und Deployment-Platform haben wir *cloud.docker.com* gewählt u.a. wegen:
-
-* Automatisertes Build der Images bei Push auf das Git-Repository
-* Bereitstellung Docker-Swarm 
-* *komplettes* Management der zugehörigen AWS-Ressourcen
-* Deployment der Container(Services) in den Docker-Swarm 
-
-=== Build-Pipeline
-
-image::build-process.drawio.png[Build-Process]
-
-=== Screenshot cloud.docker.com
-
-image:ss-cloud.docker.com.png[Docker-Cloud-Build]
-
-=== Produktiv-Umgebung
-
-image:prod-environment.png[ProdEnv]
+demnächst
 
 
-== Herausforderungen und Learnings
 
-* FB-Messenger API Doku nicht besonders gut
-** Ausprobieren an vielen Stellen notwendig
-* FB-Messenger-Account-Linking mit OTTO-Oauth so nicht nutzbar
-** Eigener Bot muss als Proxy vermittlen
+== Fazit und Learnings
+
+* Terratest erfüllt seine Aufgabe und ist gut geeignet das Test-Paradigma bei Infrastructure as Code zu erfüllen
+* Auch hier ist es effektiver die Tests vorher wenigstens grob zu designen +
+ -> Terraform-Scripte werden dadurch besser testbar implementiert 
+* Die Zeit für Auf- und Abbau von Infrastructure in der Cloud ist nicht zu unterschätzen
 
 
 == Talk to us
@@ -161,3 +135,9 @@ https://www.ottogroupnet.com/beyondtouch/
 
 [.noborder]
 image::teamraum_qr.svg[250,250,float="left"]
+
+=== Quellen & Links
+
+Terraform:: https://www.terraform.io/
+Terratest:: https://github.com/gruntwork-io/terratest
+Unser Beispiel:: https://github.com:porschberg/terratest_explorer
