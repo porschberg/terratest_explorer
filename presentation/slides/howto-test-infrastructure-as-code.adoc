@@ -97,26 +97,41 @@ image::architecture-terraform-explorer[Architektur]
 
 terraform.tf:: Definition Provider, Backend
 variables.tf:: Feslegung der variablen Parameter ggf. abhängig vom Workspace
-data.tf:: Welche Daten werden aus der Cloud/Lokal benötigt
+data.tf:: Was kommt aus der Cloud/Lokal
 «other».tf:: Die eigentlichen benötigten Ressourcen
 
 === Die Terraform-Tests
 
+[source,golang]
+.terraform_test.go [Ausschnitt]
+-----
+package test
 
-[source,yaml]
-.docker-compose.yml [gekürzt]
+import (
+  "testing"
+  "github.com/gruntwork-io/terratest/modules/terraform"
+  "github.com/stretchr/testify/assert"
+  "github.com/gruntwork-io/terratest/modules/aws"
+}
+
+func TestTerraformExplorer(t *testing.T) {
+  t.Parallel()
+  defer test_structure.RunTestStage(t, "teardown", func() {
+    terraform.Destroy(t, terraformOptions)
+  })
+
+  test_structure.RunTestStage(t, "validate", func() {
+    testIPLookup(t, terraformOptions)
+    testSSHToPublicHost(t, terraformOptions)
+    testHTTPGETRequest(t)
+  })
+}
 -----
-services:
-  web:
-    image: beyondtouch/shipchat:latest
-    build: . <1>
-    ports:
------
-<1> Damit ist ein lokales Build möglich
 
 === Live-Demo
 
-demnächst
+* Live-Code-Review
+* Live Test-Execution
 
 
 
