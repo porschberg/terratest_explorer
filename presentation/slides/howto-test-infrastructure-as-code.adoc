@@ -83,13 +83,12 @@ Es ermöglicht Tests in _Go_ zu implementieren die dann:
 
 _Testing Terraform code; Testing Docker images;_
 _Executing commands on servers over SSH;_
-_Making HTTP requests;_
-_Running shell commands; ... _
+_Making HTTP requests; Running shell commands; ..._
 
 
 == Ein kleines Beispiel
 
-Einfaches Beispiel:: Dockerrized static Webserver
+Einfaches Beispiel:: Docker-rized Static Webserver
 
 image::architecture-terraform-explorer[Architektur]
 
@@ -100,9 +99,14 @@ variables.tf:: Feslegung der variablen Parameter ggf. abhängig vom Workspace
 data.tf:: Was kommt aus der Cloud/Lokal
 «other».tf:: Die eigentlichen benötigten Ressourcen
 
+=== Das Terraform-Deployment
+
+image::terratestexplorer.png[Workflow]
+
+
 === Die Terraform-Tests
 
-[source,golang]
+[source,go]
 .terraform_test.go [Ausschnitt]
 -----
 package test
@@ -112,6 +116,7 @@ import (
   "github.com/gruntwork-io/terratest/modules/terraform"
   "github.com/stretchr/testify/assert"
   "github.com/gruntwork-io/terratest/modules/aws"
+  ...
 }
 
 func TestTerraformExplorer(t *testing.T) {
