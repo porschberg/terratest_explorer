@@ -58,7 +58,7 @@ func testHTTPGETRequest(t *testing.T) {
   timeBetweenRetries := 5 * time.Second
   // Verify that we get back a 200 OK with the expected instanceText
 
-  http_helper.HttpGetWithRetryWithCustomValidation(t, "https://test-1.terratestexplorer.beyondtouch.io/", maxRetries, timeBetweenRetries,
+  http_helper.HttpGetWithRetryWithCustomValidation(t, "https://test-3.terratestexplorer.beyondtouch.io/", maxRetries, timeBetweenRetries,
     func(statusCode int, body string) bool {
     matched, _ := regexp.MatchString(`this is a simple page for terratest explorer`, body)
     logger.Logf(t, "HTTP statusCode: %s", statusCode)

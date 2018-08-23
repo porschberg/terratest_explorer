@@ -39,35 +39,6 @@ resource "aws_security_group" "terratest_explorer_sec" {
   }
 }
 
-data "aws_ami" "amazon_docker_img" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["amzn-ami-*-amazon-ecs-optimized"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["591542846629"] # Amazon
-}
-
-
-# Template for shell-script with install docker-compose, create docker-compose.yml, 
-# pull images and up the containers
-data "template_file" "app_init_tpl" {
-  template = "${file("app-init.tpl.sh")}"
-
-  vars {
-    terratest_explorer_stage = "${terraform.workspace}"
-    docker_compose           = "${file("docker-compose.yml")}"
-    index_content            = "${file("index.html")}"
-    traefik_config           = "${file("traefik.toml")}"
-  }
-}
 
 resource "aws_instance" "terratest_explorer_compute" {
   ami                         = "${data.aws_ami.amazon_docker_img.id}"
@@ -85,10 +56,10 @@ resource "aws_instance" "terratest_explorer_compute" {
 
 
 resource "aws_route53_record" "terratest_explorer_dns" {
-  zone_id = "Z97LVGVLPPV50"                                             # Id der Zone "beyondtouch.io"
-  name    = "${terraform.workspace}-1.terratestexplorer.beyondtouch.io"
+  zone_id = "${var.route53_beyondtouch_io_zoneid}"    # Id der Zone "beyondtouch.io"
+  name    = "${terraform.workspace}-3.terratestexplorer.beyondtouch.io"
   type    = "A"
-  ttl     = "300"
+  ttl     = "120"
   records = ["${aws_instance.terratest_explorer_compute.public_ip}"]
 }
 
