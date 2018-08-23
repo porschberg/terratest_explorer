@@ -14,11 +14,11 @@ resource "aws_ssm_parameter" "terratest_key_pub_openssh_ssm" {
   value = "${tls_private_key.terratest_key.public_key_openssh}"
 }
 
-//output "terratest_explorer_private_key" {
-//  value = "${tls_private_key.terratest_key.private_key_pem}"
-//}
-//
-//output "terratest_explorer_public_key" {
-//  value = "${tls_private_key.terratest_key.public_key_openssh}"
-//}
+output "terratest_explorer_private_key" {
+  value = "${tls_private_key.terratest_key.private_key_pem}"
+}
+
+output "terratest_explorer_public_key" {
+  value = "${tls_private_key.terratest_key.public_key_openssh}"
+}
 

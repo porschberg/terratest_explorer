@@ -3,3 +3,4 @@
 deploy_rsa.*
 pkg/
 src/github.com/
+src/golang.org/
