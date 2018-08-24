@@ -8,7 +8,7 @@ services:
     labels:
     - "traefik.enable=true"
     - "traefik.port=8043"
-    - "traefik.frontend.rule=Host:${terratest_explorer_stage}-3.terratestexplorer.beyondtouch.io"
+    - "traefik.frontend.rule=Host:${terratest_explorer_stage}-5.terratestexplorer.beyondtouch.io"
     - "traefik.frontend.entryPoints=http,https"
     #- "traefik.backend=web"
   traefik:

@@ -19,12 +19,12 @@ Wie teste ich Infrastructure as Code?
 == Authors
 
 [.float-right]
-image:thomas.jpg[Bild Thomas, 250] +
+image:foto-thomas.png[Bild Thomas, 250] +
 Thomas Porschberg +
 Fullstack-SW-Developer +
 image:osp_logo.png[OSP, 90, role='noborder']
 
-image::bernd-2017q-1024.png[Bernd, 250]
+image::foto-bernd.png[Bernd, 250]
 Bernd Ledig +
 SW-Architekt & DevOps +
 image:osp_logo.png[OSP, 90, role='noborder']
@@ -32,7 +32,7 @@ image:osp_logo.png[OSP, 90, role='noborder']
 
 == Die Aufgabe
 
-Aufbau der Infrastruktur für ein Teilprojekt innerhalb des Beyondtouch-Projektes in der AWS-Cloud
+Aufbau der Infrastruktur für ein Teilprojekt innerhalb des Beyondtouch-Projektes in der AWS-Cloud.
 
 * Infrasturcture as Code auf der Basis von Terraform +
   +++<small>+++(Terraform = Tool to Write, Plan, and Create Infrastructure as Code) +++</small>+++
@@ -45,6 +45,19 @@ Aufbau der Infrastruktur für ein Teilprojekt innerhalb des Beyondtouch-Projekte
 
 .Crispy-Train
 image:crispy-train-infra.drawio.png[Crispy-Architecture, role='noborder']
+
+=== Infrastructure-Code
+
+image:code-collection.png[code, 1500]
+
+=== Infrastructure-Code
+
+*ca. 500 Line of Codes! Bisher nur manuell getestet!*
+
+* Infrastructure-Code wird ähnlich komplex wie _normaler_ Code
+* Fehler im Code können schwere Fehler in Produktion bewirken
+* Manuelle Test bei steigender Komplexität nicht mehr handelbar!
+
 
 == Implementierung -> Terraform
 
@@ -156,6 +169,18 @@ https://www.ottogroupnet.com/beyondtouch/
 
 [.noborder]
 image::teamraum_qr.svg[250,250,float="left"]
+
+
+=== Kontakt
+
+Bernd Ledig:: 
+  M: bernd.ledig@ottogroup.com +
+  T: 0351 49723 230
+
+Thomas Porschberg:: 
+  M: thomas.porschberg@ottogroup.com +
+  T: 0351 49723 158
+
 
 === Quellen & Links
 

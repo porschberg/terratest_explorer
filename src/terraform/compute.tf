@@ -57,7 +57,7 @@ resource "aws_instance" "terratest_explorer_compute" {
 
 resource "aws_route53_record" "terratest_explorer_dns" {
   zone_id = "${var.route53_beyondtouch_io_zoneid}"    # Id der Zone "beyondtouch.io"
-  name    = "${terraform.workspace}-3.terratestexplorer.beyondtouch.io"
+  name    = "${terraform.workspace}-5.terratestexplorer.beyondtouch.io"
   type    = "A"
   ttl     = "120"
   records = ["${aws_instance.terratest_explorer_compute.public_ip}"]
