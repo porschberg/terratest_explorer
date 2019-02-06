@@ -14,6 +14,6 @@ aws ssm get-parameter --name $AWS_PEM_PARAM_NAME --with-decryption --query Param
 aws ssm get-parameter --name $AWS_PUB_PARAM_NAME --with-decryption --query Parameter.Value --output text > ws1_rsa.pub
 
 
-chmod 0600 deploy_rsa.pem
+chmod 0600 ws1_rsa.pem
 
 echo "SSH-Keys copied from AWS Paramater Store:  ws1_rsa.pem / ws1_rsa.pub"
