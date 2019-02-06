@@ -1,7 +1,7 @@
 # defaultEntryPoints must be at the top because it should not be in any table below
 defaultEntryPoints = ["http", "https"]
 
-logLevel = "INFO"
+logLevel = "WARN"
 
 [api]
 # Port for the status page
@@ -24,8 +24,8 @@ address = ":443"
 # Enable ACME (Let"s Encrypt): automatic SSL
 [acme]
 #caServer = "https://acme-staging-v02.api.letsencrypt.org/directory"
-email = "bernd.ledig@ottogroup.com"
-storage = "acme.json" # or "traefik/acme/account" if using KV store
+email = "thomas.porschberg@ottogroup.com"
+storage = "/certs/acme.json" # or "traefik/acme/account" if using KV store
 entryPoint = "https"
 onDemand = false
 onHostRule = true
@@ -35,7 +35,7 @@ entryPoint = "http"
 
 [docker]
 endpoint = "unix:///var/run/docker.sock"
-domain = "docker.local"
+domain = "beyondtouch.io"
 watch = true
 swarmmode = false
 exposedbydefault = false

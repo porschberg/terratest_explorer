@@ -9,6 +9,9 @@ yum install -y -q wget
 wget -q -O /usr/local/bin/docker-compose https://github.com/docker/compose/releases/download/1.20.1/docker-compose-Linux-x86_64
 chmod +x /usr/local/bin/docker-compose
 
+# create public network
+docker network create public
+
 mkdir -p /home/ec2-user/web/data
 cd /home/ec2-user/web
 

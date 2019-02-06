@@ -28,7 +28,7 @@ func TestTerraformExplorer(t *testing.T) {
   }
 
   test_structure.RunTestStage(t, "setup", func() {
-    terraform.RunTerraformCommand(t, terraformOptions, "workspace", "select", "test" )
+    terraform.RunTerraformCommand(t, terraformOptions, "workspace", "select", "ws1" )
     workspaceList := terraform.RunTerraformCommand(t, terraformOptions, "workspace", "list")
     logger.Logf(t, "WORKSPACE_LIST: %s", workspaceList)
     terraform.InitAndApply(t, terraformOptions)
@@ -58,7 +58,7 @@ func testHTTPGETRequest(t *testing.T) {
   timeBetweenRetries := 5 * time.Second
   // Verify that we get back a 200 OK with the expected instanceText
 
-  http_helper.HttpGetWithRetryWithCustomValidation(t, "https://test-5.terratestexplorer.beyondtouch.io/", maxRetries, timeBetweenRetries,
+  http_helper.HttpGetWithRetryWithCustomValidation(t, "https://ws1.terratestexplorer.beyondtouch.io/", maxRetries, timeBetweenRetries,
     func(statusCode int, body string) bool {
     matched, _ := regexp.MatchString(`this is a simple page for terratest explorer`, body)
     logger.Logf(t, "HTTP statusCode: %s", statusCode)

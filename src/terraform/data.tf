@@ -1,14 +1,15 @@
 data "aws_ami" "amazon_docker_img" {
   most_recent = true
+
   filter {
     name   = "name"
-    values = ["amzn-ami-*-amazon-ecs-optimized"]
+    values = ["amzn2-ami-ecs-hvm*"]
   }
+
   filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
+    name   = "owner-alias"
+    values = ["amazon"]
   }
-  owners = ["591542846629"] # Amazon
 }
 
 # Template for shell-script with install docker-compose, create docker-compose.yml, 

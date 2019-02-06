@@ -1,6 +1,27 @@
 resource "aws_key_pair" "terratest_explorer_ssh" {
   key_name   = "terratest_explorer-${terraform.workspace}"
-  public_key = "${tls_private_key.terratest_key.public_key_openssh}"
+  public_key = "${file("${local.key_file_pub}")}"
+}
+
+resource "aws_volume_attachment" "ebs_att" {
+  device_name = "/dev/sdh"
+  volume_id   = "${local.cert_vol_value}"
+  instance_id = "${aws_instance.terratest_explorer_compute.id}"
+  skip_destroy = true
+  force_detach = true
+  provisioner "remote-exec" {
+    inline = [
+      "chmod +x /home/ec2-user/format_cert_volume.sh",
+      "/home/ec2-user/format_cert_volume.sh",
+    ]
+
+    connection {
+      host     = "${aws_instance.terratest_explorer_compute.public_ip}"
+      type     = "ssh"
+      user     = "ec2-user"
+      private_key = "${file("${local.key_file_private}")}"
+    }
+  }
 }
 
 # security group for terratest_explorer backend 
@@ -50,6 +71,17 @@ resource "aws_instance" "terratest_explorer_compute" {
     Name = "TerratestExplorer-${terraform.workspace}"
   }
 
+  provisioner "file" {
+    source      = "format_cert_volume.sh"
+    destination = "/home/ec2-user/format_cert_volume.sh"
+
+    connection {
+      type     = "ssh"
+      user     = "ec2-user"
+      private_key = "${file("${local.key_file_private}")}"
+    }
+  }
+
   security_groups = ["default", "${aws_security_group.terratest_explorer_sec.name}"]
   user_data       = "${data.template_file.app_init_tpl.rendered}"
 }
@@ -57,7 +89,7 @@ resource "aws_instance" "terratest_explorer_compute" {
 
 resource "aws_route53_record" "terratest_explorer_dns" {
   zone_id = "${var.route53_beyondtouch_io_zoneid}"    # Id der Zone "beyondtouch.io"
-  name    = "${terraform.workspace}-5.terratestexplorer.beyondtouch.io"
+  name    = "${terraform.workspace}.terratestexplorer.beyondtouch.io"
   type    = "A"
   ttl     = "120"
   records = ["${aws_instance.terratest_explorer_compute.public_ip}"]

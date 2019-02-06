@@ -3,16 +3,20 @@ services:
   web:
     restart: unless-stopped
     image: pierrezemb/gostatic
+    depends_on:
+      - traefik
     volumes:
     - "./data:/srv/http"
+    ports:
+      - "8043:8043" # just for demo
     labels:
     - "traefik.enable=true"
     - "traefik.port=8043"
-    - "traefik.frontend.rule=Host:${terratest_explorer_stage}-5.terratestexplorer.beyondtouch.io"
+    - "traefik.frontend.rule=Host:${terratest_explorer_stage}.terratestexplorer.beyondtouch.io"
     - "traefik.frontend.entryPoints=http,https"
-    #- "traefik.backend=web"
+    - "traefik.backend=web"
   traefik:
-    image: traefik:1.6
+    image: traefik:1.7.8
     ports:
     - "80:80"
     - "443:443"
@@ -20,7 +24,13 @@ services:
     volumes:
     - ./traefik.toml:/traefik.toml
     - /var/run/docker.sock:/var/run/docker.sock
+    - /certs:/certs
     restart: unless-stopped
 
 volumes:
   data:
+
+networks:
+  default:
+    external:
+      name: public

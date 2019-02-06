@@ -1,7 +1,7 @@
 terraform {
   backend "s3" {
     bucket         = "terraformworkspace-remote-state-storage-s3"
-    key            = "terratest_explorer"
+    key            = "terratest_explorer_admin"
     region         = "eu-central-1"
     dynamodb_table = "terraform-state-lock-dynamo"
   }
