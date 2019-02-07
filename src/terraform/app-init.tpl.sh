@@ -31,6 +31,7 @@ echo '${traefik_config}' > ./traefik.toml
 
 chown ec2-user * .env
 
+# We can no longer start the docker container here because the external volume for the traefik certificate is not mounted yet.
 # Pull Docker-Images and Start the Docker-Containers
-sudo -u ec2-user /usr/local/bin/docker-compose pull
-sudo -u ec2-user /usr/local/bin/docker-compose up -d
+# sudo -u ec2-user /usr/local/bin/docker-compose pull
+# sudo -u ec2-user /usr/local/bin/docker-compose up -d

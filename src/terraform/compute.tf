@@ -13,6 +13,8 @@ resource "aws_volume_attachment" "ebs_att" {
     inline = [
       "chmod +x /home/ec2-user/format_cert_volume.sh",
       "/home/ec2-user/format_cert_volume.sh",
+      "/home/ec2-user/format_cert_volume.sh",
+      "cd /home/ec2-user/web && /usr/local/bin/docker-compose pull && /usr/local/bin/docker-compose up -d "
     ]
 
     connection {
@@ -101,4 +103,12 @@ output "terratest_explorer_compute_public_ip" {
 
 output "terratest_explorer_compute_id" {
   value = "${aws_instance.terratest_explorer_compute.id}"
+}
+
+output "terratest_explorer_public_ssh_key" {
+  value = "${file("${local.key_file_pub}")}"
+}
+
+output "terratest_explorer_private_ssh_key" {
+  value = "${file("${local.key_file_private}")}"
 }
