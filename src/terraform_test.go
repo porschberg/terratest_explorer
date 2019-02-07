@@ -40,8 +40,12 @@ func TestTerraformExplorer(t *testing.T) {
 
   test_structure.RunTestStage(t, "validate", func() {
     testIPLookup(t, terraformOptions)
+    logger.Logf(t, "Before testSSHToPublicHost(t, terraformOptions)")
     testSSHToPublicHost(t, terraformOptions)
+    logger.Logf(t, "After testSSHToPublicHost(t, terraformOptions)")
+    logger.Logf(t, "Before testHTTPGETRequest(t)")
     testHTTPGETRequest(t)
+    logger.Logf(t, "After testHTTPGETRequest(t)")
   })
 
   }
@@ -50,7 +54,10 @@ func testIPLookup(t *testing.T, terraformOptions *terraform.Options) {
   outputIP := terraform.Output(t, terraformOptions, "terratest_explorer_compute_public_ip")
   actualInstanceID := terraform.Output(t, terraformOptions, "terratest_explorer_compute_id")
   instanceIP := aws.GetPublicIpOfEc2Instance(t, actualInstanceID, "eu-central-1")
+  logger.Logf(t, "Before comparsion of IP Addresses %s", outputIP)
+  logger.Logf(t, "Before comparsion of IP Addresses %s", instanceIP)
   assert.Equal(t, instanceIP, outputIP)
+  logger.Logf(t, "After comparsion of IP Addresses")
 }
 
 func testHTTPGETRequest(t *testing.T) {
@@ -61,7 +68,7 @@ func testHTTPGETRequest(t *testing.T) {
   http_helper.HttpGetWithRetryWithCustomValidation(t, "https://ws1.terratestexplorer.beyondtouch.io/", maxRetries, timeBetweenRetries,
     func(statusCode int, body string) bool {
     matched, _ := regexp.MatchString(`this is a simple page for terratest explorer`, body)
-    logger.Logf(t, "HTTP statusCode: %s", statusCode)
+    logger.Logf(t, "HTTP statusCode: %d", statusCode)
     logger.Logf(t, "HTTP Response-BODY: %s", body)
     return statusCode == 200 && matched
   })
@@ -77,7 +84,7 @@ func testSSHToPublicHost(t *testing.T, terraformOptions *terraform.Options) {
   testSSHToPublicHostInternal(t, sshKeypair, backendIP)
 }
 
-func testSSHToPublicHostInternal(t *testing.T, sshKeyPair *ssh.KeyPair, publicInstanceIP string) {
+func  testSSHToPublicHostInternal(t *testing.T, sshKeyPair *ssh.KeyPair, publicInstanceIP string) {
   // Run `terraform output` to get the value of an output variable
   // publicInstanceIP := terraform.Output(t, terraformOptions, "public_instance_ip")
 
@@ -116,7 +123,7 @@ func testSSHToPublicHostInternal(t *testing.T, sshKeyPair *ssh.KeyPair, publicIn
 
 // GenerateRSAKeyPairE generates an RSA Keypair and return the public and private keys.
 func extractKeypair(t *testing.T, terraformOptions *terraform.Options) (*ssh.KeyPair, error) {
-  publicKey := terraform.Output(t, terraformOptions, "terratest_explorer_public_key")
-  privateKey := terraform.Output(t, terraformOptions, "terratest_explorer_private_key")
+  publicKey := terraform.Output(t, terraformOptions, "terratest_explorer_public_ssh_key")
+  privateKey := terraform.Output(t, terraformOptions, "terratest_explorer_private_ssh_key")
   return &ssh.KeyPair{ PublicKey: publicKey, PrivateKey: privateKey}, nil
 }
